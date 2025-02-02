@@ -1,9 +1,9 @@
 Comandos usados practica 1
 Practica 1: Instalación del Sistema Operativo (NombreDeSuDistro)
 
-Cree una máquina virtual con recursos suficientes para ejecutar con éxito su sistema operativo (consultar requisitos mínimo de su distro)
-Configure la Tarjeta de Red de su VM en modo Bridge
-Ejecute la Instalación del sistema Operativo en su VM
+-Cree una máquina virtual con recursos suficientes para ejecutar con éxito su sistema operativo (consultar requisitos mínimo de su distro)
+-Configure la Tarjeta de Red de su VM en modo Bridge
+-Ejecute la Instalación del sistema Operativo en su VM
 
 No hay comandos, es la instalación.
 
@@ -12,8 +12,8 @@ No hay comandos, es la instalación.
 Comandos usados practica 2
 Practica 2: Configuración de parámetros de red.
 
-Configure los parámetros de red utilizando DHCP e IP estática a través de la terminal (explique TODAS las formas que su sistema operativo permite configurarlo)
-Configure los DNS de Google 8.8.8.8 - 8.8.4.4 en su sistema
+-Configure los parámetros de red utilizando DHCP e IP estática a través de la terminal (explique TODAS las formas que su sistema operativo permite configurarlo)
+-Configure los DNS de Google 8.8.8.8 - 8.8.4.4 en su sistema
 
 ifconfig - Información de interfaces de red
 Otro comando con el que podemos verificar esto es:
@@ -74,9 +74,9 @@ ifconfig
 Comandos usados practica 3
 Practica 3: Gestión de Usuario y grupos
 
-Cree un usuario con su nombre y agréguelo al grupo "sudoers" para que tenga permisos de administración
-Cree un grupo llamado guest, cree un usuario y agréguelo al grupo creado anteriormente
-Elimine el usuario y el grupo previamente creado
+-Cree un usuario con su nombre y agréguelo al grupo "sudoers" para que tenga permisos de administración
+-Cree un grupo llamado guest, cree un usuario y agréguelo al grupo creado anteriormente
+-Elimine el usuario y el grupo previamente creado
 
 sudo useradd -m altagracia
 ls
@@ -143,11 +143,11 @@ cat /etc/group
 Comandos usados practica 4
 Practica 4: Gestión de Permisos de archivos
 
-Cree una carpeta llamada materia, dentro cree un archivo llamado estudiante.txt y edítelo utilizando "vi", agregue su nombre y matrícula
-Modifique los permisos para que solo el usuario propietario del archivo pueda tener control total
-Modifique los permisos para que solo el grupo propietario del archivo pueda tener control total
-Cree una nueva carpeta llamada materia2 y cree una copia del archivo estudiante.txt dentro de ella
-Elimine la carpeta materia junto con el archivo estudiante.txt
+-Cree una carpeta llamada materia, dentro cree un archivo llamado estudiante.txt y edítelo utilizando "vi", agregue su nombre y matrícula
+-Modifique los permisos para que solo el usuario propietario del archivo pueda tener control total
+-Modifique los permisos para que solo el grupo propietario del archivo pueda tener control total
+-Cree una nueva carpeta llamada materia2 y cree una copia del archivo estudiante.txt dentro de ella
+-Elimine la carpeta materia junto con el archivo estudiante.txt
 
 mkdir materia
 cd materia
