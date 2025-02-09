@@ -1,0 +1,44 @@
+practica 1
+
+sudo apt update && sudo apt upgrade -y
+grep -r 'deb' /etc/apt/sources.list /etc/apt/sources.list.d/*.list
+
+//////
+apt search bashtop 
+sudo apt install bashtop -y
+bashtop
+
+///
+sudo apt remove --purge bashtop -y
+
+/////
+sudo apt autoremove -y
+
+
+
+practica 2
+
+
+sudo crontab -e
+0 23 * * * sudo apt update && sudo apt upgrade
+sudo crontab -l 
+sudo systemctl restart cron 
+
+//////////
+crontab -e
+0 3 * * 0 usr/sbin/reboot
+which reboot
+sudo crontab-l
+
+//////
+sudo apt install at
+ls /tmp
+sudo echo rm -rf /tmp | at now + 1 minute
+atq
+date
+
+sudo su
+echo rm -rf /tmp | at now + 1 minute
+ls /tmp
+atq
+date
