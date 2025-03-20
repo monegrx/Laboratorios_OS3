@@ -1,0 +1,168 @@
+-----------------------------practica 1
+
+ssh michelle@192.168.100.143
+ssh-keygen
+ssh-copy-id michelle@192.168.100.143
+
+sudo apt install rsync -y
+
+cd Desktop
+mkdir practica
+cd asael
+touch carpeta{1..100}.txt
+ls
+rsync -azP /home/michelle/Desktop/michelle/ michelle@192.168.100.143:/home/michelle
+
+sudo nano carpeta50.txt
+
+rsync -azP /home/michelle/Desktop/michelle/ michelle@192.168.100.143:/home/michelle
+
+
+nano /prueba_script.sh
+sudo nano /prueba_script.sh
+sudo chmod +x /prueba_script.sh
+crontab -e
+* * * * * /bin/bash ~/prueba_script.sh
+touch goku.txt
+sudo nano goku.txt
+
+
+-------------------------------------------practica 2
+
+sudo apt install keepalived -y
+
+sudo nano /etc/keepalived/keepalived.conf
+
+vrrp_instance VI_1 {
+	state MASTER
+	interface eth0
+	virtual_router_id 51
+	priority 100
+	advert_int 1
+	authentication {
+		auth_type PASS
+		auth_pass 1111
+	
+	}
+	virtual_ipaddress {
+		192.168.43.130/24
+	}
+
+}
+
+*****SERVIDOR 2*****
+
+vrrp_instance VI_1 {
+	state BACKUP
+	interface eth0
+	virtual_router_id 51
+	priority 90
+	advert_int 1
+	authentication {
+		auth_type PASS
+		auth_pass 1111
+	
+	}
+	virtual_ipaddress {
+		192.168.43.130/24
+	}
+
+}
+
+
+sudo systemctl start keepalived
+sudo systemctl enable keepalived
+sudo systemctl status keepalived
+
+ip a show eth0
+
+-------------------------------------------PRACTICA 3
+ sudo nano /var/www/html/index.html
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <title> Servidor Web - server 1</title>
+</head>
+<body> 
+	<h1> Este es el servidor Web - server 1</h1>
+</body>
+</html>
+
+
+-----server 2
+
+sudo nano /var/www/html/index.html
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <title> Servidor Web - server 2</title>
+</head>
+<body> 
+	<h1> Este es el servidor Web - server 12</h1>
+</body>
+</html>
+
+
+
+sudo nano /etc/keepalived/keepalived.conf
+
+vrrp_script chk_httpd {
+	script "killall -0 apache2"
+	interval 2
+	weight 2
+}
+
+vrrp_instance VI_1 {
+	state MASTER
+	interface eth0
+	virtual_router_id 51
+	priority 110
+	advert_int 1
+	authentication {
+		auth_type PASS
+		auth_pass 1111
+	
+	}
+	virtual_ipaddress {
+		192.168.43.130/24
+	
+
+}
+
+*****SERVIDOR 2*****
+
+
+vrrp_instance VI_1 {
+	state BACKUP
+	interface eth0
+	virtual_router_id 51
+	priority 100
+	advert_int 1
+	authentication {
+		auth_type PASS
+		auth_pass 1111
+	
+	}
+	virtual_ipaddress {
+		192.168.43.130/24
+	
+
+}
+
+
+sudo systemctl start keepalived
+sudo systemctl enable keepalived
+sudo systemctl status keepalived
+sudo systemctl start apache2
+sudo systemctl enable apache2
+
+ip a show eth0
+
+
+
