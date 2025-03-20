@@ -1,0 +1,38 @@
+sudo apt install postfix -y
+sudo dpkg-reconfigure postfix
+sudo systemctl restart postfix
+
+sudo apt install mailutils -y
+
+sudo nano /etc/postfix/sasl/sasl_passwd
+
+[smpt.gmail.com]:587 TuCorreoElectronico:TuContraseñaDeAplicacion
+
+sudo postmap /etc/postfix/sasl/sasl_passwd
+
+sudo chmod 600 /etc/postfix/sasl/sasl_passwd
+sudo chmod 600 /etc/postfix/sasl/sasl_passwd.db
+
+sudo nano /etc/postfix/main.conf
+
+
+*******AGREGUEN O EDITEN ESTAS LINEAS********
+
+myhostname = kalihost.kalisecurity
+mydestination = $myhostname, kalihost.kalisecurity, localhost.kalisecurity, localhost
+
+relayhost = [smpt.gmail.com]:587
+
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd
+smtp_tls_security_level = encrypt
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+
+sudo systemctl restart postfix
+sudo systemctl enable postfix
+sudo systemctl start postfix
+
+echo "ESTE ES UN CORREO DE PRUEBA" | mail -s "ASUNTO DE PRUEBA" CorreoDeDestino
+
+sudo postqueue -p
