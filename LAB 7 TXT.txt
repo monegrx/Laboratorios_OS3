@@ -1,0 +1,223 @@
+----------PRACTICA 1
+1. Instalar y Configurar NFS en el Servidor (Kali Linux)
+sudo apt update && sudo apt install -y nfs-kernel-server
+
+Crear el directorio y los archivos compartidos
+sudo mkdir -p /srv/nfs/OS3
+cd /srv/nfs/OS3
+sudo touch Adrian{1..100}.txt
+
+Asignar permisos 
+sudo chmod -R 777 /srv/nfs/OS3
+sudo chown -R nobody:nogroup /srv/nfs/OS3
+
+configurar el archivo exports
+sudo nano /etc/exports
+
+y agregamos esta linea 
+/srv/nfs/OS3  192.168.100.0/24(sync,wdelay,hide,no_subtree_check,sec=sys,rw,secure,root_squash,no_all_squash)
+
+aplicamos los cambios y reiniciamos nfs
+sudo exportfs -ra
+sudo systemctl restart nfs-kernel-server
+
+Configuramos el cliente Linux
+
+Instalamos el cliente NFS
+sudo apt update && sudo apt install -y nfs-common
+
+crear un punto de montaje
+sudo mkdir -p /mnt/nfs_OS3
+
+Montar el directorio compartido manualmente
+sudo mount 192.168.100.154:/srv/nfs/OS3 /mnt/nfs_OS3
+
+verificamos que los archivos están en el cliente
+ls /mnt/nfs_OS3
+
+Configurar Montaje Automatico 
+
+sudo nano /etc/fstab
+
+y agregamos esta linea al final
+192.168.100.154:/srv/nfs/OS3  /mnt/nfs_OS3  nfs  defaults  0  0
+
+probamos el montanje automatico
+
+reiniciamos la maquina
+sudo reboot
+
+y cuando inicie verificamos si el directorio esta montado
+
+ls /mnt/nfs_OS3
+
+
+--------------------------------PRACTICA2
+Paso 1: Instalar SAMBA y habilitar el servicio
+sudo apt update && sudo apt install samba -y
+
+Luego, habilitamos y arrancamos el servicio Samba:
+sudo systemctl enable --now smbd
+sudo systemctl status smbd
+
+2.1 Crear la carpeta compartida
+sudo mkdir -p /srv/samba/shared
+
+Crear un grupo para usuarios de Samba
+sudo groupadd smbgroup
+
+creamos el usuario adrian y asignamos al grupo
+sudo useradd -M -s /sbin/nologin adrian
+sudo usermod -aG smbgroup adrian
+
+Asignar una contraseña para el usuario en Samba
+sudo smbpasswd -a adrian
+
+Configurar Permisos de la Carpeta Compartida
+sudo chown -R adrian:smbgroup /srv/samba/shared
+sudo chmod -R 770 /srv/samba/shared
+
+lo hacemos con nuestro usuario para que nos permita modificar la carpeta
+sudo chown -R michelle:smbgroup /srv/samba/shared
+sudo chmod -R 770 /srv/samba/shared
+
+Configurar Samba para Compartir la Carpeta
+sudo nano /etc/samba/smb.conf
+
+a final del archivo agregamos 
+[Shared]
+   path = /srv/samba/shared
+   browseable = yes
+   writable = yes
+   guest ok = no
+   read only = no
+   create mask = 0770
+   directory mask = 0770
+   valid users = @smbgroup
+
+reiniciamos samba
+sudo systemctl restart smbd
+
+
+creamos los 100 archivos
+
+cd /srv/samba/shared
+touch adrian{1..100}
+ls
+
+configuramos el firewall
+
+sudo ufw allow samba
+sudo ufw reload
+sudo ufw status
+
+mapeamos la carpeta samba en windows
+Desde una PC con Windows:
+Abrir el Explorador de Archivos.
+
+Hacer clic en "Este equipo" y luego en "Conectar a unidad de red".
+
+Seleccionar una letra de unidad (ejemplo: Z:).
+
+En la casilla "Carpeta", escribir:
+
+\\IP_DEL_SERVIDOR\Shared
+(Reemplazar IP_DEL_SERVIDOR con la dirección IP del servidor Linux. Para conocer la IP en Linux, ejecutar ip a | grep inet).
+
+Marcar "Conectar con credenciales diferentes" y hacer clic en "Finalizar".
+
+Ingresar el usuario "adrian" y la contraseña de Samba.
+
+La carpeta compartida se mostrará como una unidad de red en Windows.
+
+
+Editar el Archivo Adrian99 desde Windows
+
+abrimos el archivo con bloc de notas y agregamos
+el zumzum de la carabela
+lo guardamoos y cerramos
+
+
+Validar los cambios desde Linux
+cat /srv/samba/shared/adrian99
+
+---------------------------------------PRACTICA3
+sudo apt update && sudo apt install -y samba samba-dsdb-modules samba-vfs-modules krb5-user krb5-config krb5-kdc krb5-admin-server dnsutils
+
+sudo nano /etc/hosts
+ponemos esta linea 192.168.100.11 dc.os3.inet
+
+configuramos el nombre del host
+sudo hostnamectl set-hostname dc.os3.inet
+sudo hostnamectl
+
+configurar kerberos
+sudo nano /etc/krb5.conf
+borramos todo con ctrl+k
+y ponemos
+
+[libdefaults]
+    default_realm = OS3.INET
+    dns_lookup_realm = false
+    dns_lookup_kdc = true
+
+[realms]
+    OS3.INET = {
+        kdc = dc1.os3.inet
+        admin_server = dc.os3.inet
+    }
+
+[domain_realm]
+    .os3.inet = OS3.INET
+    os3.inet = OS3.INET
+
+configuramos samba
+sudo mv /etc/samba/smb.conf /etc/samba/smb.confbk
+sudo samba-tool domain provision --use-rfc2307 --interactive
+le damos todo enter
+
+reiniciamos servicios samba
+sudo systemctl restart samba-ad-dc
+sudo systemctl start smbd
+sudo systemctl start nmbd
+
+creamos el usuario en Linux
+sudo useradd lanegracubana
+sudo passwd lanegracubana
+
+agregamos usuario a samba
+sudo smbpasswd -a lanegracubana
+sudo smbpasswd -e lanegracubana
+
+YA EN WINDOWS
+entramos un bloc de notas de administrador y abrimos el archivo de host
+C:\Windows\System32\drivers\etc\hosts
+agregamos esta linea al final
+ 192.168.100.11 dc.os3.inet
+
+
+Configura la dirección DNS en la red de la máquina Windows para que apunte a la IP del servidor Samba (192.168.100.11).
+
+Abre Centro de redes y recursos compartidos.
+
+Selecciona Cambiar configuración del adaptador.
+
+Haz clic derecho en tu adaptador de red y selecciona Propiedades.
+
+En Protocolo de Internet versión 4 (TCP/IPv4), haz clic en Propiedades.
+
+Configura el servidor DNS con la dirección 192.168.100.11
+
+
+luego verificamos todo con un nslookup dc.os3.inet
+
+luego nos unimos al dominio 
+
+Ve a Configuración del sistema -> Cambiar la configuración del sistema.
+
+En Miembros de dominio, ingresa os3.inet y haz clic en Aceptar.
+
+Ingresa las credenciales del administrador cuando se te solicite (usuario: Administrator, contra).
+
+
+luego de que se agregue al dominio nos pedirá reiniciar y al terminar el reinicio, agregamos otro usuario(lanegracubana)
