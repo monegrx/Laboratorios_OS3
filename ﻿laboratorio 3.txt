@@ -1,0 +1,97 @@
+﻿laboratorio 3
+
+práctica 1
+punto 1
+
+sudo nano etc/default/grub
+Cambiar (o agregar si no está) la línea:
+GRUB_TIMEOUT=20
+
+
+sudo update grub
+sudo reboot
+
+
+punto 2
+le damos a la letra e
+en linux al final ponemos init=/bin/bash
+para remontar el sistema de archivo raíz 
+mount -o remount,rw /
+nano etc/shadow
+
+buscamos el usuario al que le cambiaremos la contraseña 
+borramos desde el primer dos puntos hasta el siguiente dos puntos
+ctrl x y
+passwd michelle20241430
+iniciamos el proceso init
+exec /sbin/init
+
+
+práctica 2
+
+punto 1
+primero que nada accedemos a la carpeta que creé para guardar los scrips
+cd /home/michelle20241430/scripts
+
+creamos el adriático
+nano backup.sh
+
+#! /bin/bash
+
+fecha=$(date +"%d-%m-%Y:%H: %M* )
+carpeta_origen="/home/michelle20241430* backup_destino="/home/michelle20241430/backups/backup_$fecha.tar.gz"
+sudo mkdir -p /home/michelle2024130/backups tar -czvfe"$backup_destino" "$carpeta origen"
+echo "BACKUP CREADO EN: $backup_destino"
+
+chmod +x backup.sh
+./backup.sh
+
+
+punto 2
+cd /home/michelle20241430/scripts
+touch copiar_ifconfig.sh
+nano copiar_ifconfig.sh
+#! /bin/bash
+
+echo "Ingrese el nombre del archivo(sin extension):* read nombre_archivo
+ruta_archivo=*/home/michelle20241430/Desktop/$(nombre_archivo}.txt"
+ifconfig > "$ruta_archivo"
+echo *EL RESULTADO DE IFCONFIG SE HA GUARDADO EN: Sruta_archivo"
+
+chmod +x copiar_ifconfig.sh
+./copiar_ifconfig.sh
+ifconfig_backup
+
+cat  /home/monegro/Desktop/ifconfig_backup.txt
+
+Practica 3
+
+validamos el ping entre ambas maquinas(desde windows)
+ping 192.168.1.123
+
+instalamos y habilitamos ssh
+sudo apt update
+sudo apt install openssh-server -y
+sudo systemctl enable ssh
+sudo systemctl start ssh
+
+verificamos el estado
+sudo systemctl status ssh
+
+
+probamos la conexión desde windows via cmd
+ssh michelle20241430@192.168.1.123
+
+Generamos la llave ssh
+ssh-keygen
+
+copiamos la llave a la maquina via ssh 
+type C:\Users\miche\.ssh\id_ed25519.pub | ssh monegro@192.168.0.13 "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+
+luego probamos la conexión
+ssh monegro@192.168.0.13
+
+
+
+
+ 

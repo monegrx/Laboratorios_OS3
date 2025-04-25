@@ -1,0 +1,151 @@
+Practica 1
+
+Instalar y Activar Apache2
+sudo apt update
+sudo apt install apache2 -y
+sudo systemctl start apache2
+sudo systemctl enable apache2
+sudo systemctl status apache2
+
+Crear el primer sitio (Puerto 80) con "hola mundo"
+sudo mkdir -p /var/www/monegro
+sudo nano /var/www/monegro/index.html
+
+
+<!DOCTYPE html>
+<html>
+<head><title>Hola Mundo</title></head>
+<body><h1>Hola Mundo</h1></body>
+</html>
+
+creamos el host virtual 
+sudo nano /etc/apache2/sites-available/monegro.conf
+
+<VirtualHost *:80>
+    ServerName monegro.local
+    DocumentRoot /var/www/monegro
+    <Directory /var/www/monegro>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+Habilitamos sitio y agregamos al host
+sudo a2ensite monegro.conf
+
+sudo nano /etc/hosts
+127.0.0.1    monegro.local
+
+sudo systemctl restart apache2
+
+verificamos en http://monegro.local
+
+Creamos el Segundo sitio(Puerto 8080)
+sudo mkdir -p /var/www/michellemonegro
+sudo nano /var/www/michellemonegro/index.html
+
+<!DOCTYPE html>
+<html>
+<head><title>Datos</title></head>
+<body>
+    <h1>michelle monegro</h1>
+    <p>Matrícula: 20241430</p>
+    <p>Materia: Administración de Sistemas Operativos</p>
+</body>
+</html>
+
+
+sudo nano /etc/apache2/sites-available/michellemonegro.conf
+<VirtualHost *:8080>
+    ServerName michellemonegro.local
+    DocumentRoot /var/www/michellemonegro
+    <Directory /var/www/michelle>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+
+sudo nano /etc/apache2/ports.conf
+agregamos Listen 8080
+
+Activamos sitio y actualizamos 
+sudo a2ensite michemonegro.conf
+sudo nano /etc/hosts
+127.0.0.1    michellemonegro.local
+
+reiniciamos apache
+sudo systemctl restart apache2
+
+
+Practica 2
+sudo apt install postfix -y
+sudo dpkg-reconfigure postfix
+internet site
+recipient for root :root
+en other destination
+$myhostname, localhost.$mydomain, localhost_____
+sudo systemctl restart postfix
+
+sudo apt install mailutils -y
+
+sudo nano /etc/postfix/sasl/sasl_passwd
+
+[smtp.gmail.com]:587 TuCorreoElectronico:TuContraseñaDeAplicacion
+
+sudo postmap /etc/postfix/sasl/sasl_passwd
+
+sudo chmod 600 /etc/postfix/sasl/sasl_passwd
+sudo chmod 600 /etc/postfix/sasl/sasl_passwd.db
+
+sudo nano /etc/postfix/main.cf
+
+
+*******AGREGUEN O EDITEN ESTAS LINEAS********
+
+myhostname = kalihost.kalisecurity
+mydestination = $myhostname, kalihost.kalisecurity, localhost.kalisecurity, localhost
+
+relayhost = [smtp.gmail.com]:587
+
+agregar
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd
+smtp_tls_security_level = encrypt
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd
+smtp_tls_security_level = encrypt
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+
+sudo systemctl restart postfix
+sudo systemctl enable postfix
+sudo systemctl start postfix
+
+echo "ESTE ES UN CORREO DE PRUEBA" | mail -s "ASUNTO DE PRUEBA" CorreoDeDestino
+
+sudo postqueue -p
+
+
+Practica 3 
+ sudo apt update && sudo  apt install cups -y
+   64  sudo apt install cups-pdf -y
+   65  sudo apt install printer-driver-cups-pdf -y
+   66  sudo service cups start
+   67  sudo systemctl enable  cups 
+   68  sudo systemctl status cups 
+   69  sudo apt install ufw
+   70  sudo ufw enable
+   71  sudo nano /etc/cups/cupsd.conf
+comentamos la linea de listen /run/cups/cups.sock
+y agregamos la linea Listen 0.0.0.0:631
+ 
+   73  sudo ufw allow 631/tcp
+   74  sudo ufw allow ssh
+   75  sudo ufw status
+   76  sudo usermod -aG lpadmin $(whoami)
+   77  sudo cupsctl --remote-admin --remote-any --share-printers
+   78  sudo systemctl restart cups  luego vamos a  print setting en la maquina virtual y le damos  aserver luego a conect y conectamos luego le damos a add y verificamos que se agrego en la interfaz web de cups y luego agregamos la impresora  al cliente windows e imprimimos la hoja de word
+
+
