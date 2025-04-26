@@ -142,6 +142,7 @@ Validar los cambios desde Linux
 cat /srv/samba/shared/adrian99
 
 ---------------------------------------PRACTICA3
+Instala y configura SAMBA como controlador de dominio, crea un usuario llamado teteretere y anade una VM de Windows a un dominio y loguearte cone se usuario en windows
 sudo apt update && sudo apt install -y samba samba-dsdb-modules samba-vfs-modules krb5-user krb5-config krb5-kdc krb5-admin-server dnsutils
 
 sudo nano /etc/hosts
